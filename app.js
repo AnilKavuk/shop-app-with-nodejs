@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+const Joi = require("joi");
+
 app.use(express.json());
 
 const products = [
@@ -31,6 +33,13 @@ app.get("/api/products", (req, res) => {
 });
 
 app.post("/api/products", (req, res) => {
+  if (!req.body.name || req.body.name.length < 4) {
+    res
+      .status(400)
+      .send("Ürün adı bilgisini en az 3 karakter olarak girmelisiniz.");
+    return;
+  }
+
   const product = {
     id: products.length + 1,
     name: req.body.name,
@@ -38,17 +47,16 @@ app.post("/api/products", (req, res) => {
   };
 
   products.push(product);
-
-  return res.send(product);
+  res.send(product);
 });
 
 app.get("/api/products/:id", (req, res) => {
   const product = products.find((product) => product.id == req.params.id);
 
   if (!product) {
-    return res.status(404).send("aradığınız ürün bulunamadı");
+    res.status(404).send("aradığınız ürün bulunamadı");
   }
-  return res.send(product);
+  res.send(product);
 });
 
 app.listen(3000, () => {
