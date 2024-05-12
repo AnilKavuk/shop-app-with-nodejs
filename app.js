@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 const products = [
   {
     id: 1,
@@ -26,6 +28,18 @@ app.get("/", (req, res) => {
 
 app.get("/api/products", (req, res) => {
   res.send(products);
+});
+
+app.post("/api/products", (req, res) => {
+  const product = {
+    id: products.length + 1,
+    name: req.body.name,
+    price: req.body.price,
+  };
+
+  products.push(product);
+
+  return res.send(product);
 });
 
 app.get("/api/products/:id", (req, res) => {
