@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Joi = require("joi");
+const { Product, validateProduct } = require("../models/product");
 
 const products = [
   {
@@ -21,7 +21,34 @@ const products = [
   },
 ];
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
+  // const products = await Product.find();
+  // const products = await Product.find({ price: { $eq: 10000 } });
+  // const products = await Product.find({ price: { $ne: 10000 } });
+  // const products = await Product.find({ price: { $gt: 10000 } });
+  // const products = await Product.find({ price: { $gte: 10000 } });
+  // const products = await Product.find({ price: { $lt: 10000 } }); // price < 10000
+  // const products = await Product.find({ price: { $lte: 10000 } }); // price <= 10000
+  // const products = await Product.find({ price: { $in: [10000, 20000] } });
+  // const products = await Product.find({ price: { $nin: [10000, 20000] } });
+  // const products = await Product.find({ price: { $gte: 10000, $lte: 20000 } });
+  // const products = await Product.find({ price: { $gte: 10000, $lte: 20000 }, name: "Samsung" }); // and
+  // const products = await Product.find()
+  //                             .or([
+  //                                 { price: { $gte: 10000} },
+  //                                 {isActive: true }
+  //                             ]); // (price >= 10000 or isActive==true)
+
+  // startwith
+  // const products = await Product.find({ name: /^iphone/ });
+
+  // endwith
+  // const products = await Product.find({ name: /iphone$/ });
+
+  // contains
+  // const products = await Product.find({ name: /.*iphone.*/i });
+
+  const products = await Product.find({ isActive: true });
   res.send(products);
 });
 
@@ -33,14 +60,23 @@ router.post("/", (req, res) => {
     return;
   }
 
-  const product = {
-    id: products.length + 1,
+  const product = new Product({
     name: req.body.name,
     price: req.body.price,
-  };
+    description: req.body.description,
+    imageUrl: req.body.imageUrl,
+    isActive: req.body.isActive,
+  });
 
-  products.push(product);
-  res.send(product);
+  const result = saveProduct(product);
+
+  if (result) {
+    products.push(product);
+    res.send(product);
+  } else {
+    products.push(product);
+    res.send(product);
+  }
 });
 
 router.put("/:id", (req, res) => {
@@ -78,8 +114,8 @@ router.delete("/:id", (req, res) => {
   res.send(product);
 });
 
-router.get("/:id", (req, res) => {
-  const product = products.find((product) => product.id == req.params.id);
+router.get("/:id", async (req, res) => {
+  const product = await Product.findById(req.params.id);
 
   if (!product) {
     res.status(404).send("aradığınız ürün bulunamadı");
@@ -87,13 +123,14 @@ router.get("/:id", (req, res) => {
   res.send(product);
 });
 
-function validateProduct(product) {
-  const schema = new Joi.object({
-    name: Joi.string().min(3).max(30).required(),
-    price: Joi.number().required(),
-  });
-
-  return schema.validate(product);
+async function saveProduct(product) {
+  try {
+    const result = await product.save();
+    console.log(result);
+    return result;
+  } catch (err) {
+    console.log("err: ", err);
+  }
 }
 
 module.exports = router;
