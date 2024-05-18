@@ -33,10 +33,10 @@ app.get("/api/products", (req, res) => {
 });
 
 app.post("/api/products", (req, res) => {
-  if (!req.body.name || req.body.name.length < 4) {
-    res
-      .status(400)
-      .send("Ürün adı bilgisini en az 3 karakter olarak girmelisiniz.");
+  const { error } = validateProduct(req.body);
+
+  if (error) {
+    res.status(400).send(error.details[0].message);
     return;
   }
 
@@ -50,6 +50,27 @@ app.post("/api/products", (req, res) => {
   res.send(product);
 });
 
+app.put("/api/products/:id", (req, res) => {
+  const product = products.find((product) => product.id == req.params.id);
+
+  if (!product) {
+    res.status(404).send("aradığınız ürün bulunamadı.");
+    return;
+  }
+
+  const { error } = validateProduct(req.body);
+
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+
+  product.name = req.body.name;
+  product.price = req.body.price;
+
+  res.send(product);
+});
+
 app.get("/api/products/:id", (req, res) => {
   const product = products.find((product) => product.id == req.params.id);
 
@@ -58,6 +79,15 @@ app.get("/api/products/:id", (req, res) => {
   }
   res.send(product);
 });
+
+function validateProduct(product) {
+  const schema = new Joi.object({
+    name: Joi.string().min(3).max(30).required(),
+    price: Joi.number().required(),
+  });
+
+  return schema.validate(product);
+}
 
 app.listen(3000, () => {
   console.log("listening port 3000");
