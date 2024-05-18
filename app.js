@@ -25,16 +25,48 @@ app.use(
 
 mongoose.set("strictQuery", false);
 
-mongoose
-  .connect(db)
-  .then(() => {
+(async () => {
+  try {
+    await mongoose.connect(db);
     console.log("mongodb bağlantısı kuruldu.");
-  })
-  .catch((err) => console.log(err));
+  } catch (err) {
+    console.log(err);
+  }
+})();
 
 app.use("/api/products", products);
 app.use("/", home);
 
+const productSchema = mongoose.Schema({
+  name: String,
+  price: Number,
+  description: String,
+  imageUrl: String,
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  isActive: Boolean,
+});
+
+const Product = mongoose.model("Product", productSchema);
+const product = new Product({
+  name: "Iphone 14",
+  price: 30000,
+  description: "Apple",
+  imageUrl: "1.jpeg",
+  isActive: true,
+});
+
+async function saveProduct() {
+  try {
+    const result = await product.save();
+    console.log(result);
+  } catch (err) {
+    console.log("err: ", err);
+  }
+}
+
 app.listen(port, () => {
-  console.log("listening port 3000");
+  console.log("listening port " + port);
 });
