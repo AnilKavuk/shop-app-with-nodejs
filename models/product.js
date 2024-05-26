@@ -11,6 +11,7 @@ const productSchema = mongoose.Schema({
     default: Date.now,
   },
   isActive: Boolean,
+  category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
 });
 
 function validateProduct(product) {
@@ -20,6 +21,7 @@ function validateProduct(product) {
     description: Joi.string().required(),
     imageUrl: Joi.string().required(),
     isActive: Joi.boolean().required(),
+    category: Joi.string(),
   });
 
   return schema.validate(product);

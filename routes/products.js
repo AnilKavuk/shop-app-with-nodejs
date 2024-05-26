@@ -4,11 +4,13 @@ const router = express.Router();
 const { Product, validateProduct } = require("../models/product");
 
 router.get("/", async (req, res) => {
-  const products = await Product.find({ isActive: true });
+  const products = await Product.find({ isActive: true })
+    .populate("category", "name -_id")
+    .select("-isActive -_id");
   res.send(products);
 });
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const { error } = validateProduct(req.body);
 
   if (error) {
@@ -22,9 +24,10 @@ router.post("/", (req, res) => {
     description: req.body.description,
     imageUrl: req.body.imageUrl,
     isActive: req.body.isActive,
+    category: req.body.category,
   });
 
-  const newProduct = product.save();
+  const newProduct = await product.save();
   res.send(newProduct);
 });
 

@@ -58,6 +58,7 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   let category = null;
+
   if (req.params.id.length === 24) {
     category = await Category.findByIdAndDelete(req.params.id);
   }
