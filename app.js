@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const products = require("./routes/products");
 const home = require("./routes/home");
 const { db, port } = require("./config");
+const categories = require("./routes/categories");
 
 app.use(express.json());
 
@@ -36,6 +37,7 @@ mongoose.set("strictQuery", false);
 
 app.use("/api/products", products);
 app.use("/", home);
+app.use("/api/categories", categories);
 
 app.listen(port, () => {
   console.log("listening port " + port);

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Joi = require("joi");
 
 const categorSchema = mongoose.Schema({
   name: String,
@@ -9,6 +10,15 @@ const categorSchema = mongoose.Schema({
   isActive: Boolean,
 });
 
-Category = mongoose.model("Category", categorSchema);
+function validateCategory(category) {
+  const schema = new Joi.object({
+    name: Joi.string().min(3).max(30).required(),
+    isActive: Joi.boolean().required(),
+  });
 
-module.exports = { Category };
+  return schema.validate(category);
+}
+
+const Category = mongoose.model("Category", categorSchema);
+
+module.exports = { Category, validateCategory };

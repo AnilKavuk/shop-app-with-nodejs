@@ -3,24 +3,6 @@ const router = express.Router();
 
 const { Product, validateProduct } = require("../models/product");
 
-const products = [
-  {
-    id: 1,
-    name: "Iphone 12",
-    price: 20000,
-  },
-  {
-    id: 2,
-    name: "Iphone 13",
-    price: 30000,
-  },
-  {
-    id: 3,
-    name: "Iphone 14",
-    price: 40000,
-  },
-];
-
 router.get("/", async (req, res) => {
   const products = await Product.find({ isActive: true });
   res.send(products);
@@ -42,15 +24,8 @@ router.post("/", (req, res) => {
     isActive: req.body.isActive,
   });
 
-  const result = saveProduct(product);
-
-  if (result) {
-    products.push(product);
-    res.send(product);
-  } else {
-    products.push(product);
-    res.send(product);
-  }
+  const newProduct = product.save();
+  res.send(newProduct);
 });
 
 router.put("/:id", async (req, res) => {
@@ -95,15 +70,5 @@ router.get("/:id", async (req, res) => {
   }
   res.send(product);
 });
-
-async function saveProduct(product) {
-  try {
-    const result = await product.save();
-    console.log(result);
-    return result;
-  } catch (err) {
-    console.log("err: ", err);
-  }
-}
 
 module.exports = router;
