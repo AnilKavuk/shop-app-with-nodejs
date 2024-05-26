@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { Product, validateProduct } = require("../models/product");
+const { Comment } = require("../models/comment");
 
 router.get("/", async (req, res) => {
   const products = await Product.find({ isActive: true })
@@ -35,7 +36,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) {
-    res.status(404).send("aradığınız ürün bulunamadı.");
+    res.status(404).send("The product you are looking for was not found.");
     return;
   }
   const { error } = validateProduct(req.body);
@@ -48,6 +49,7 @@ router.put("/:id", async (req, res) => {
   product.description = req.body.description;
   product.imageUrl = req.body.imageUrl;
   product.isActive = req.body.isActive;
+  product.category = req.body.category;
   const updatedProduct = await product.save();
   res.send(updatedProduct);
 });
@@ -59,7 +61,7 @@ router.delete("/:id", async (req, res) => {
   }
 
   if (!product) {
-    res.status(404).send("aradığınız ürün bulunamadı.");
+    res.status(404).send("The product you are looking for was not found.");
     return;
   }
 
@@ -67,12 +69,61 @@ router.delete("/:id", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  const product = await Product.findById(req.params.id).populate(
+    "category",
+    "name -_id"
+  );
+
+  if (!product) {
+    res.status(404).send("The product you are looking for was not found.");
+  }
+  res.send(product);
+});
+
+router.put("/comment/:id", async (req, res) => {
   const product = await Product.findById(req.params.id);
 
   if (!product) {
-    res.status(404).send("aradığınız ürün bulunamadı");
+    res.status(404).send("The product you are looking for was not found.");
+    return;
   }
-  res.send(product);
+
+  const comment = new Comment({
+    text: req.body.text,
+    username: req.body.username,
+  });
+
+  product.comments.push(comment);
+
+  const updatedProduct = await product.save();
+
+  res.send(updatedProduct);
+});
+
+router.delete("/comment/:id", async (req, res) => {
+  let product = null;
+
+  if (req.params.id.length === 24) {
+    product = await Product.findById(req.params.id);
+  }
+
+  const comment = product.comments.id(req.body.commentId);
+
+  if (comment) {
+    comment.remove();
+  } else {
+    res.status(404).send("There are no comments you wish to delete.");
+    return;
+  }
+
+  const updatedProduct = await product.save();
+
+  if (!product) {
+    res.status(404).send("The product you are looking for was not found.");
+    return;
+  }
+
+  res.send(updatedProduct);
 });
 
 module.exports = router;

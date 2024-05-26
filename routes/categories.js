@@ -14,7 +14,7 @@ router.get("/:id", async (req, res) => {
   const category = await Category.findById(req.params.id);
 
   if (!category) {
-    res.status(404).send("aradığınız kategori yok");
+    res.status(404).send("The category you are looking for was not found.");
   }
 
   res.send(category);
@@ -42,7 +42,7 @@ router.put("/:id", async (req, res) => {
   const category = await Category.findById(req.params.id);
 
   if (!category) {
-    res.status(404).send("aradığınız kategori yok");
+    res.status(404).send("The category you are looking for was not found.");
   }
 
   const { error } = validateCategory(req.body);
@@ -68,7 +68,7 @@ router.delete("/:id", async (req, res) => {
   }
 
   if (!category) {
-    res.status(404).send("aradığınız ürün bulunamadı.");
+    res.status(404).send("The category you are looking for was not found.");
     return;
   }
 
