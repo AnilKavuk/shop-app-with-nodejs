@@ -6,7 +6,7 @@ const { Product, validateProduct } = require("../models/product");
 router.get("/", async (req, res) => {
   const products = await Product.find({ isActive: true })
     .populate("category", "name -_id")
-    .select("-isActive -_id");
+    .select("-isActive -_id -comments._id");
   res.send(products);
 });
 
@@ -25,6 +25,7 @@ router.post("/", async (req, res) => {
     imageUrl: req.body.imageUrl,
     isActive: req.body.isActive,
     category: req.body.category,
+    comments: req.body.comments,
   });
 
   const newProduct = await product.save();

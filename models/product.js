@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const { commentSchema } = require("./comment");
 
 const productSchema = mongoose.Schema({
   name: String,
@@ -12,6 +13,7 @@ const productSchema = mongoose.Schema({
   },
   isActive: Boolean,
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+  comments: [commentSchema],
 });
 
 function validateProduct(product) {
@@ -22,6 +24,7 @@ function validateProduct(product) {
     imageUrl: Joi.string().required(),
     isActive: Joi.boolean().required(),
     category: Joi.string(),
+    comments: Joi.array(),
   });
 
   return schema.validate(product);
