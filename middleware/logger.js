@@ -1,9 +1,10 @@
 const { transports, createLogger, format } = require("winston");
+const { db } = require("../config");
 const { combine, timestamp, prettyPrint } = format;
 
+require("winston-mongodb");
+
 const logger = createLogger({
-  level: "debug",
-  //   format: format.json(),
   format: combine(
     timestamp({
       format: "MMM-DD-YYYY HH:mm:ss",
@@ -12,7 +13,15 @@ const logger = createLogger({
   ),
   transports: [
     new transports.Console(),
-    new transports.File({ filename: "logs.log" }),
+    new transports.File({ filename: "logs.log", level: "error" }),
+    new transports.MongoDB({
+      level: "error",
+      db: db,
+      options: {
+        useUnifiedTopology: true,
+      },
+      collection: "server_logs",
+    }),
   ],
 });
 
