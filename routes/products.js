@@ -1,3 +1,4 @@
+require("express-async-errors");
 const express = require("express");
 const router = express.Router();
 
@@ -7,16 +8,11 @@ const { Comment } = require("../models/comment");
 const auth = require("../middleware/auth");
 const isAdmin = require("../middleware/isAdmin");
 
-router.get("/", async (req, res, next) => {
-  try {
-    throw new Error("Internal server error");
-    const products = await Product.find({ isActive: true })
-      .populate("category", "name -_id")
-      .select("-isActive -_id -comments._id");
-    res.send(products);
-  } catch (exception) {
-    next(exception);
-  }
+router.get("/", async (req, res) => {
+  const products = await Product.find({ isActive: true })
+    .populate("category", "name -_id")
+    .select("-isActive -_id -comments._id");
+  res.send(products);
 });
 
 router.post("/", [auth, isAdmin], async (req, res) => {
