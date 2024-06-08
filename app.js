@@ -9,7 +9,7 @@ const home = require("./routes/home");
 const { db, port } = require("./config");
 const categories = require("./routes/categories");
 const users = require("./routes/users");
-
+const error = require("./middleware/error");
 app.use(express.json());
 
 app.use(
@@ -40,6 +40,8 @@ app.use("/api/products", products);
 app.use("/api/categories", categories);
 app.use("/api/users", users);
 app.use("/", home);
+
+app.use(error);
 
 app.listen(port, () => {
   console.log("listening port " + port);
