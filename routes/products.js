@@ -4,6 +4,9 @@ const router = express.Router();
 const { Product, validateProduct } = require("../models/product");
 const { Comment } = require("../models/comment");
 
+const auth = require("../middleware/auth");
+const isAdmin = require("../middleware/isAdmin");
+
 router.get("/", async (req, res) => {
   const products = await Product.find({ isActive: true })
     .populate("category", "name -_id")
@@ -11,7 +14,7 @@ router.get("/", async (req, res) => {
   res.send(products);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", [auth, isAdmin], async (req, res) => {
   const { error } = validateProduct(req.body);
 
   if (error) {
