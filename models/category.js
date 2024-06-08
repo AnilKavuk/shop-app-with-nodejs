@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 
-const categorSchema = mongoose.Schema({
+const categorySchema = mongoose.Schema({
   name: String,
   date: {
     type: Date,
@@ -21,6 +21,6 @@ function validateCategory(category) {
   return schema.validate(category);
 }
 
-const Category = mongoose.model("Category", categorSchema);
+const Category = mongoose.model("Category", categorySchema);
 
 module.exports = { Category, validateCategory };
