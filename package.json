@@ -7,7 +7,7 @@
     "dev": "cross-env NODE_ENV=development npx nodemon app.js",
     "prod": "cross-env NODE_ENV=production npx nodemon app.js",
     "start": "node app.js",
-    "build": "echo 'Building...' && npm install --output public"
+    "build": "echo 'Building...' && npm install npm audit fix --force --output public"
   },
   "keywords": [],
   "author": "",
