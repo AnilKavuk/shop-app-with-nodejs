@@ -9,7 +9,6 @@ const auth = require("../middleware/auth");
 const isAdmin = require("../middleware/isAdmin");
 
 router.get("/", async (req, res) => {
-  throw new Error("hata oluştu");
   const products = await Product.find({ isActive: true })
     .populate("category", "name -_id")
     .select("-isActive -_id -comments._id");
