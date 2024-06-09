@@ -7,7 +7,12 @@ if (result.error) {
 
 const { parsed: envs } = result;
 
-const db = envs.DB;
+let db = null;
+if (process.env.NODE_ENV === "development") {
+  db = envs.DB_DEV_URL;
+} else if (process.env.NODE_ENV === "production") {
+  db = envs.DB_PROD_URL;
+}
 
 const port = envs.PORT ?? 3000;
 
