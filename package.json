@@ -4,9 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development npx nodemon app.js",
-    "prod": "cross-env NODE_ENV=production npx nodemon app.js",
-    "start": "node app.js",
+    "dev": "cross-env NODE_ENV=development npx nodemon index.js",
+    "prod": "cross-env NODE_ENV=production npx nodemon index.js",
+    "start": "node index.js",
     "build": "echo 'Building...' && npm install npm audit fix --force --output public"
   },
   "keywords": [],
