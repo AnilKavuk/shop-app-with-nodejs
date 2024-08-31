@@ -5,19 +5,17 @@ if (result.error) {
   throw result.error;
 }
 
-const { parsed: envs } = result;
-
 let db = null;
 if (process.env.NODE_ENV === "development") {
-  db = envs.DB_DEV_URL;
+  db = process.env.DB_DEV_URL;
 } else if (process.env.NODE_ENV === "production") {
-  db = envs.DB_PROD_URL;
+  db = process.env.DB_PROD_URL;
 }
 
-const port = envs.PORT ?? 3000;
+const port = process.env.PORT ?? 3000;
 
-const saltRounds = envs.SALT_ROUNDS;
+const saltRounds = process.env.SALT_ROUNDS;
 
-const secretKey = envs.SECRET_KEY;
+const secretKey = process.env.SECRET_KEY;
 
 module.exports = { db, port, saltRounds, secretKey };
