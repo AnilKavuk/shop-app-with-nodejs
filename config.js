@@ -1,7 +1,7 @@
 const dotEnv = require("dotenv");
 const result = dotEnv.config();
 
-if (result.error) {
+if (result.error && process.env.NODE_ENV === "development") {
   throw result.error;
 }
 
