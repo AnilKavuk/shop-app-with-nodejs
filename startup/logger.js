@@ -13,18 +13,22 @@ const logger = createLogger({
   ),
   transports: [
     new transports.Console(),
-    new transports.File({
-      filename: "logs/logs.log",
-      level: "error",
-      maxFiles: "3d",
-    }),
-    new transports.File({
-      filename: "logs/exceptions.log",
-      level: "error",
-      handleExceptions: true,
-      handleRejections: true,
-      maxFiles: "3d",
-    }),
+    ...(process.env.NODE_ENV === "development"
+      ? [
+          new transports.File({
+            filename: "logs/logs.log",
+            level: "error",
+            maxFiles: "3d",
+          }),
+          new transports.File({
+            filename: "logs/exceptions.log",
+            level: "error",
+            handleExceptions: true,
+            handleRejections: true,
+            maxFiles: "3d",
+          }),
+        ]
+      : []),
     new transports.MongoDB({
       level: "error",
       db: db,
